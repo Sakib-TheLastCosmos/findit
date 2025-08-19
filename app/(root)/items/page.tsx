@@ -1,10 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -44,12 +40,13 @@ export default function SearchItemsPage() {
   return (
     <div className="h-screen flex overflow-hidden bg-gray-950 text-gray-100">
       {/* Sidebar */}
-      <aside className="fixed top-0 left-0 h-full w-64 bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-6 text-blue-400">Filters</h2>
+      <aside className="fixed top-16 left-0 h-[calc(100%-4rem)] w-64 bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto">
+        <h2 className="text-xl font-semibold mb-6 mt-6 text-blue-400">Filters</h2>
 
+        {/* Status */}
         <div className="mb-5">
           <label className="block mb-2 text-gray-300 text-sm font-medium">Status</label>
-          <Select onValueChange={(value) => setStatusFilter(value || null)}>
+          <Select>
             <SelectTrigger className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg px-3 py-2">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -60,9 +57,10 @@ export default function SearchItemsPage() {
           </Select>
         </div>
 
+        {/* Category */}
         <div className="mb-5">
           <label className="block mb-2 text-gray-300 text-sm font-medium">Category</label>
-          <Select onValueChange={(value) => setCategoryFilter(value || null)}>
+          <Select>
             <SelectTrigger className="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-lg px-3 py-2">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
@@ -75,41 +73,60 @@ export default function SearchItemsPage() {
           </Select>
         </div>
 
-        <Button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium w-full mt-4 rounded-lg shadow-md"
-          onClick={() => {
-            setStatusFilter(null);
-            setCategoryFilter(null);
-            setSearch("");
-          }}
-        >
+        {/* Location */}
+        <div className="mb-5">
+          <label className="block mb-2 text-gray-300 text-sm font-medium">Location</label>
+          <input
+            type="text"
+            placeholder="Enter location"
+            className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-100"
+          />
+        </div>
+
+        {/* Date */}
+        <div className="mb-5">
+          <label className="block mb-2 text-gray-300 text-sm font-medium">Date</label>
+          <input
+            type="date"
+            className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-100"
+          />
+        </div>
+
+        {/* Keyword Tags */}
+        <div className="mb-5">
+          <label className="block mb-2 text-gray-300 text-sm font-medium">Keywords</label>
+          <input
+            type="text"
+            placeholder="e.g., wallet, keys, phone"
+            className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-100"
+          />
+        </div>
+
+        {/* Reset Button */}
+        <Button className="bg-blue-500 hover:bg-blue-600 text-white font-medium w-full mt-4 rounded-lg shadow-md">
           Clear Filters
         </Button>
       </aside>
 
       {/* Main content area */}
-      <div className="flex-1 ml-64 flex flex-col overflow-auto">
-        {/* Navbar */}
-        <nav className="fixed top-0 left-64 right-0 h-16 bg-gray-900 border-b border-gray-800 flex items-center px-6 z-20">
-          <h1 className="text-2xl font-bold text-blue-400">Search Items</h1>
-        </nav>
-
-        {/* Content */}
-        <div className="mt-16 p-6">
+      <div className="flex-1 ml-64 flex flex-col pt-6">
+        <div className="p-6 flex justify-center">
           {/* Search bar */}
-          <div className="mb-6">
-            <Input
-              placeholder="Search by title or location"
-              className="bg-gray-900 border border-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-2 shadow-sm w-full max-w-3xl"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <input
+            placeholder="Search by title or location"
+            className="bg-gray-900 border border-gray-700 text-gray-100 focus:ring-2a focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-3 shadow-sm w-full max-w-3xl"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
 
-          {/* Item list */}
+        {/* Item list */}
+        <div className="px-6">
           <ItemList items={filteredItems} />
         </div>
       </div>
+
+
     </div>
   );
 }
