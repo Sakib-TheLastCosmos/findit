@@ -1,31 +1,65 @@
-// app/report/page.tsx
 'use client';
 
 import { useState } from "react";
 import { Upload, XCircle, Calendar } from "lucide-react";
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
 } from "@/components/ui/select";
+import { slugify } from "@/lib/utils";
 
 
 export default function ReportItemPage() {
     const [title, setTitle] = useState("");
+    const [subtitle, setSubtitle] = useState("");
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
     const [status, setStatus] = useState("lost");
     const [image, setImage] = useState<File | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const formData = { title, description, location, date, status, image };
-        console.log("Submitting report:", formData);
-        alert("Item reported successfully!");
+
+        const formData = {
+            title,
+            subtitle,
+            description,
+            location,
+            date,
+            status,
+            image,
+            slug: slugify(title) // make sure slug is unique
+        };
+
+        try {
+            const response = await fetch("/api/report", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || "Failed to submit report");
+            }
+
+            const result = await response.json();
+            console.log("Report submitted successfully:", result);
+
+            window.location.href = `/report/${result.id}`; // redirect to the report page
+
+            // optionally clear form fields here
+        } catch (error: any) {
+            console.error("Error submitting report:", error.message);
+        }
     };
+
 
     const removeImage = () => setImage(null);
 
@@ -47,6 +81,19 @@ export default function ReportItemPage() {
                             onChange={(e) => setTitle(e.target.value)}
                             required
                             placeholder="Lost Wallet, Found Phone..."
+                            className="w-full border border-gray-700 rounded-lg px-4 py-2 bg-gray-900 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        />
+                    </div>
+
+                    {/* Subtitle */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-300">Subtitle</label>
+                        <input
+                            type="text"
+                            value={subtitle}
+                            onChange={(e) => setSubtitle(e.target.value)}
+                            required
+                            placeholder="Briefly describe the item in one line"
                             className="w-full border border-gray-700 rounded-lg px-4 py-2 bg-gray-900 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                         />
                     </div>
