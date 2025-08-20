@@ -32,7 +32,7 @@ export default function ReportItemPage() {
             date,
             status,
             image,
-            slug: slugify(title) // make sure slug is unique
+            slug: slugify(title), // make sure slug is unique
         };
 
         try {
@@ -52,11 +52,11 @@ export default function ReportItemPage() {
             const result = await response.json();
             console.log("Report submitted successfully:", result);
 
-            window.location.href = `/report/${result.id}`; // redirect to the report page
+            window.location.href = `/items/${result.id}`; // redirect to the report page
 
             // optionally clear form fields here
-        } catch (error: any) {
-            console.error("Error submitting report:", error.message);
+        } catch (error: unknown) {
+            console.error("Error submitting report:", (error as Error).message);
         }
     };
 

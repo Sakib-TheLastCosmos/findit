@@ -2,32 +2,20 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
 
 type ItemDetailsProps = {
   params: { slug: string };
 };
 
-export default function ItemDetailsPage({ params }: ItemDetailsProps) {
+export default async function ItemDetailsPage({ params }: ItemDetailsProps) {
   const { slug } = params;
 
   // Mock data for now
-  const item = {
-    title: "Lost Wallet",
-    description: "Black leather wallet with ID cards and some cash.",
-    longDescription:
-      "This wallet was last seen near the central library of Dhaka University around 3 PM on 17th August. It contains my university ID card, a few visiting cards, and some important receipts along with some cash. Please contact me if found, as these documents are extremely valuable to me.",
-    location: "Dhaka University",
-    date: "2025-08-17",
-    status: "lost", // can be "lost" or "found"
-    category: "Accessories",
-    imageUrl: "/wallet.jpg",
-    postedBy: {
-      name: "Sakib Hasan",
-      avatarUrl: "/profile.jpg",
-      contact: "sakib@example.com",
-    },
-  };
+
+  const response = await fetch(`http://localhost:3000/api/items/${slug}`); // Fetch item details from API
+  console.log(response)
+  const item = await response.json();
 
   const statusColor =
     item.status === "lost"
@@ -56,7 +44,7 @@ export default function ItemDetailsPage({ params }: ItemDetailsProps) {
         <div className="bg-gray-900 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
           {/* Image */}
           <div className="flex-1 bg-gray-800">
-            <img
+            <Image
               src={item.imageUrl}
               alt={item.title}
               className="w-full h-[350px] object-cover md:h-full"
@@ -76,7 +64,7 @@ export default function ItemDetailsPage({ params }: ItemDetailsProps) {
             </div>
 
             {/* Short Description */}
-            <p className="text-gray-300 leading-relaxed">{item.description}</p>
+            <p className="text-gray-300 leading-relaxed">{item.subtitle}</p>
 
             {/* Metadata */}
             <div className="border-t border-gray-700 mt-6 pt-6 space-y-2 text-gray-200">
@@ -94,7 +82,7 @@ export default function ItemDetailsPage({ params }: ItemDetailsProps) {
               </div>
             </div>
 
-            {/* Poster Profile */}
+            {/* Poster Profile
             <div className="border-t border-gray-700 mt-6 pt-6 flex items-center gap-4">
               <Avatar className="w-12 h-12">
                 <AvatarImage src={item.postedBy.avatarUrl} />
@@ -106,7 +94,7 @@ export default function ItemDetailsPage({ params }: ItemDetailsProps) {
                 <p className="font-semibold text-gray-100">{item.postedBy.name}</p>
                 <p className="text-sm text-gray-400">Posted this item</p>
               </div>
-            </div>
+            </div> */}
 
             {/* Action Buttons */}
             <div className="mt-8 flex gap-4">
@@ -126,7 +114,7 @@ export default function ItemDetailsPage({ params }: ItemDetailsProps) {
             More Details
           </h2>
           <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-            {item.longDescription}
+            {item.description}
           </p>
         </div>
       </div>

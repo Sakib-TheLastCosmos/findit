@@ -4,6 +4,8 @@ import { db } from "@/lib/firebaseAdmin";
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = params;
+        console.log(slug)
+
 
     if (!slug) {
       return new Response(JSON.stringify({ message: "Missing slug" }), { status: 400 });
@@ -20,10 +22,10 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     return new Response(JSON.stringify({ id: docSnap.id, ...docSnap.data() }), {
       status: 200,
     });
-  } catch (error: any) {
-    console.error("Error fetching item:", error);
+  } catch (error: unknown) {
+    console.error("Error fetching item:", (error as Error).message);
     return new Response(
-      JSON.stringify({ message: "Internal server error", error: error.message }),
+      JSON.stringify({ message: "Internal server error", error: (error as Error).message }),
       { status: 500 }
     );
   }

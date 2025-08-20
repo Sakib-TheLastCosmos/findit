@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import ItemList from "@/components/ItemsList";

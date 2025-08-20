@@ -25,8 +25,8 @@ export async function POST(req: Request) {
     });
 
     return new Response(JSON.stringify({ message: "Item reported successfully", id: slug }), { status: 200 });
-  } catch (error: any) {
-    console.error("Error reporting item:", error);
-    return new Response(JSON.stringify({ message: "Internal server error", error: error.message }), { status: 500 });
+  } catch (error: unknown) {
+    console.error("Error reporting item:", (error as Error).message);
+    return new Response(JSON.stringify({ message: "Internal server error", error: (error as Error).message }), { status: 500 });
   }
 }

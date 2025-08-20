@@ -1,56 +1,61 @@
-import React from 'react';
-import Link from 'next/link';
-import { auth, signIn, signOut } from '@/auth'; // Importing auth functions
+"use client";
+import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn, signOut } from "@/auth";
 
-const Navbar = async () => {
-    const session = await auth(); // Get the current session
+const Navbar = () => {
+  const router = useRouter();
+  const [userComplete, setUserComplete] = React.useState<boolean | null>(null);
 
-    return (
-        <nav className="sticky top-0 z-50 bg-primary text-white px-8 py-6 flex items-center justify-between shadow-md">
-            {/* Logo */}
-            <div className="text-xl font-bold">
-                Lost & Found
-            </div>
+  React.useEffect(() => {
+    const checkProfile = async () => {
+      const res = await fetch("/api/profile/check", { cache: "no-store" });
+      const data = await res.json();
+      setUserComplete(data.complete);
 
-            {/* Menu Links */}
-            <ul className="flex space-x-6">
-                <li>
-                    <Link href="/" className="hover:text-primary-light transition-colors">
-                        Home
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/report" className="hover:text-primary-light transition-colors">
-                        Report Item
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/items" className="hover:text-primary-light transition-colors">
-                        Search Items
-                    </Link>
-                </li>
-                <li>
-                    {session?.user ? (
-                        <Link href="/profile" className="hover:text-primary-light transition-colors">
-                            {session.user.name || 'Profile'}
-                        </Link>
-                    ) : (
-                        <form action={async () => {
-                            "use server";
-                            await signIn("google");
-                        }}>
-                            <button type="submit">Sign In</button>
-                        </form>
-                    )}
-                </li>
-                <li>
-                    <Link href="/help" className="hover:text-primary-light transition-colors">
-                        Help
-                    </Link>
-                </li>
-            </ul>
-        </nav>
-    );
-}
+      if (!data.complete) {
+        router.push("/signup");
+      }
+    };
+
+    checkProfile();
+  }, [router]);
+
+  const handleSignIn = async () => {
+    await signIn("google");
+    const res = await fetch("/api/profile/check", { cache: "no-store" });
+    const data = await res.json();
+    if (!data.complete) {
+      router.push("/signup");
+    } else {
+      router.refresh();
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 bg-primary text-white px-8 py-6 flex items-center justify-between shadow-md">
+      <div className="text-xl font-bold">Lost & Found</div>
+      <ul className="flex space-x-6">
+        <li><Link href="/">Home</Link></li>
+        <li><Link href="/report">Report Item</Link></li>
+        <li><Link href="/items">Search Items</Link></li>
+        <li>
+          {userComplete ? (
+            <button onClick={handleSignOut}>Sign Out</button>
+          ) : (
+            <button onClick={handleSignIn}>Sign In</button>
+          )}
+        </li>
+        <li><Link href="/help">Help</Link></li>
+      </ul>
+    </nav>
+  );
+};
 
 export default Navbar;
