@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
-type ItemDetailsProps = {
-  params: { slug: string };
-};
 
-export default async function ItemDetailsPage({ params }: ItemDetailsProps) {
+
+export default async function ItemDetailsPage({ params }: {params: { slug: string }}) {
   const { slug } = params;
 
   // Mock data for now
