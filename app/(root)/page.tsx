@@ -3,16 +3,12 @@ import SearchBar from "../../components/SearchBar";
 import ItemList from "@/components/ItemsList";
 import { headers } from "next/headers";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | undefined>;
-}) {
-  const query = searchParams?.query || "";
-  const page = searchParams?.page || "1";
+export default async function Home({ searchParams }: any) {
+  const query = (await searchParams)?.query || "";
+  const page = (await searchParams)?.page || "1";
   const items: any[] = [];
 
-  const host = headers().get("host");
+  const host = (await headers()).get("host");
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
   const baseUrl = `${protocol}://${host}`;
 
