@@ -20,7 +20,7 @@ const Hero = () => {
           <Link href="./report" className="bg-accent hover:bg-hover text-white font-semibold px-6 py-3 rounded-lg transition">
             Report Lost Item
           </Link>
-          <Link href="./browse" className="bg-white text-primary hover:bg-primary-light font-semibold px-6 py-3 rounded-lg transition">
+          <Link href="./items" className="bg-white text-primary hover:bg-primary-light font-semibold px-6 py-3 rounded-lg transition">
             Browse Found Items
           </Link>
         </div>

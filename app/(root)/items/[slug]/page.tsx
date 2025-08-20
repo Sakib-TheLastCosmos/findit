@@ -14,7 +14,7 @@ export default async function ItemDetailsPage({
 
   // Mock data for now
 
-  const response = await fetch(`http://localhost:3000/api/items/${slug}`); // Fetch item details from API
+  const response = await fetch(`http://localhost:3001/api/items/${slug}`); // Fetch item details from API
   console.log(response)
   const item = await response.json();
 
@@ -49,6 +49,8 @@ export default async function ItemDetailsPage({
               src={item.imageUrl}
               alt={item.title}
               className="w-full h-[350px] object-cover md:h-full"
+              width={1000}
+              height={1000}
             />
           </div>
 

@@ -1,9 +1,21 @@
+import { auth } from "@/auth";
+import { uploadFile } from "@/lib/cloudinary";
 import { db, FieldValue } from "@/lib/firebaseAdmin";
+import { getUsername } from "@/lib/utils";
+import { NextRequest } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { title, slug, subtitle, description, location, date, status, image } = body;
+    const formData = await req.formData()
+
+    const title = formData.get("title") as string;
+    const slug = formData.get("slug") as string;
+    const subtitle = formData.get("subtitle") as string;
+    const description = formData.get("description") as string;
+    const location = formData.get("location") as string;
+    const date = formData.get("date") as string;
+    const status = formData.get("status") as string;
+    const image = formData.get("image") as File | null;
 
     if (!title || !slug) {
       return new Response(JSON.stringify({ message: "Missing required fields" }), { status: 400 });
@@ -12,6 +24,15 @@ export async function POST(req: Request) {
     // ⚠ Use `db`, not `admin.default`!
     const docRef = db.collection("items").doc(slug);
 
+    const session = await auth()
+    const username = getUsername(session?.user?.email ?? "")
+
+    let imageUrl = ""
+    if (image) {
+      const result = await uploadFile(image, "items");
+      imageUrl = result.secure_url;
+    }
+
     await docRef.set({
       title,
       subtitle: subtitle || "",
@@ -19,9 +40,10 @@ export async function POST(req: Request) {
       location: location || "",
       date: date || "",
       status: status || "lost",
-      image: image || "",
+      imageUrl: imageUrl || "",
       slug,
       uploadedAt: FieldValue.serverTimestamp(),
+      authorID: username
     });
 
     return new Response(JSON.stringify({ message: "Item reported successfully", id: slug }), { status: 200 });

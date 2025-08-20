@@ -21,44 +21,38 @@ export default function ReportItemPage() {
     const [status, setStatus] = useState("lost");
     const [image, setImage] = useState<File | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        const formData = {
-            title,
-            subtitle,
-            description,
-            location,
-            date,
-            status,
-            image,
-            slug: slugify(title), // make sure slug is unique
-        };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("subtitle", subtitle);
+    formData.append("description", description);
+    formData.append("location", location);
+    formData.append("date", date);
+    formData.append("status", status);
+    formData.append("slug", slugify(title));
+    if (image) formData.append("image", image);
 
-        try {
-            const response = await fetch("/api/report", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+    try {
+        const response = await fetch("/api/report", {
+            method: "POST",
+            body: formData, // do NOT set Content-Type; browser sets it automatically
+        });
 
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.message || "Failed to submit report");
-            }
-
-            const result = await response.json();
-            console.log("Report submitted successfully:", result);
-
-            window.location.href = `/items/${result.id}`; // redirect to the report page
-
-            // optionally clear form fields here
-        } catch (error: unknown) {
-            console.error("Error submitting report:", (error as Error).message);
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.message || "Failed to submit report");
         }
-    };
+
+        const result = await response.json();
+        console.log("Report submitted successfully:", result);
+
+        window.location.href = `/items/${result.id}`;
+    } catch (error: unknown) {
+        console.error("Error submitting report:", (error as Error).message);
+    }
+};
 
 
     const removeImage = () => setImage(null);

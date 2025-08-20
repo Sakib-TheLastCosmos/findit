@@ -1,3 +1,4 @@
+import Link from "next/dist/client/link";
 import React from "react";
 
 type ItemCardProps = {
@@ -8,6 +9,7 @@ type ItemCardProps = {
     date?: string;
     imageUrl?: string;
     status?: string;
+    slug?: string;
   };
 }
 
@@ -49,9 +51,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
           📅 {item.date}
         </div>
 
-        <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
-          View Details
-        </button>
+        <Link href={`/items/${item.slug}`}>
+          <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"> View Details </button>
+        </Link>
       </div>
     </div>
   );

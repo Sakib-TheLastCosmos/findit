@@ -3,44 +3,22 @@ import Hero from "../../components/Hero";
 import SearchBar from "../../components/SearchBar";
 import ItemList from "@/components/ItemsList";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ query: string }> }) {
+export default async function Home({ searchParams }: { searchParams?: { query?: string; page?: string } }) {
+  const query = searchParams?.query || "";
+  const page = searchParams?.page || "1";
+  const items: any[] = [];
 
-  const query = (await searchParams).query;
-
-  const items = [
-    {
-      title: 'Lost Wallet',
-      description: 'Black leather wallet with ID cards',
-      location: 'Dhaka University',
-      date: '2025-08-17',
-      imageUrl: '/wallet.jpg',
-      status: "lost"
-    },
-    {
-      title: 'Lost Keys',
-      description: 'Set of house and bike keys',
-      location: 'Gulshan',
-      date: '2025-08-15',
-      imageUrl: '/keys.jpg',
-      status: "found"
-    },
-    {
-      title: 'Found Phone',
-      description: 'iPhone 12 found in the park',
-      location: 'Ramna Park',
-      date: '2025-08-14',
-      imageUrl: '/phone.jpg',
-      status: "found"
-    },
-    {
-      title: 'Lost Backpack',
-      description: 'Blue backpack with books and laptop',
-      location: 'Bashundhara City',
-      date: '2025-08-13',
-      imageUrl: '/backpack.jpg',
-      status: "lost"
-    }
-  ];
+  if (!query) {
+    // Fetch all items if no query is provided
+    const response = await fetch(`http://localhost:3001/api/items/list?page=${page}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    items.push(...data.items);
+  }
 
   return (
     <>
