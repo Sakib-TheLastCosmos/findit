@@ -3,11 +3,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+interface ItemDetailsPageProps {
+  params: Promise<any>
+}
 
-
-
-export default async function ItemDetailsPage({ params }: {params: { slug: string }}) {
-  const { slug } = params;
+export default async function ItemDetailsPage({
+  params,
+}: ItemDetailsPageProps) {
+  const { slug } = await params;
 
   // Mock data for now
 

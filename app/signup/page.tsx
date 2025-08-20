@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Camera, Upload, XCircle } from "lucide-react";
 
 interface SignUpProps {
@@ -8,23 +8,31 @@ interface SignUpProps {
     email: string;
 }
 
-export default function SignUpPage({ name, email }: SignUpProps) {
-    const [fullName, setFullName] = useState(name);
-    const [mobile, setMobile] = useState("");
-    const [address, setAddress] = useState("");
-    const [facebook, setFacebook] = useState("");
-    const [dob, setDob] = useState("");
-    const [profilePic, setProfilePic] = useState<File | null>(null);
-    const [preview, setPreview] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+export default function SignUpPage() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [address, setAddress] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [dob, setDob] = useState("");
+  const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setProfilePic(file);
-            setPreview(URL.createObjectURL(file));
-        }
-    };
+  useEffect(() => {
+    // Example: fetch from localStorage/session or an API
+    const storedName = localStorage.getItem("name") || "";
+    const storedEmail = localStorage.getItem("email") || "";
+    setFullName(storedName);
+    setEmail(storedEmail);
+  }, []);
+
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         setProfilePic(file);
+    //         setPreview(URL.createObjectURL(file));
+    //     }
+    // };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,9 +1,13 @@
 import type { NextRequest } from "next/server";
 import { db } from "@/lib/firebaseAdmin";
 
-export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
+interface getItemProps {
+  params: Promise<any>
+}
+
+export async function GET(req: NextRequest, { params, }: getItemProps) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
         console.log(slug)
 
 
