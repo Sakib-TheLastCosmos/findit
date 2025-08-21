@@ -12,8 +12,8 @@ export default async function Home({ searchParams }: any) {
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
   const baseUrl = `${protocol}://${host}`;
 
-  if (!query) {
-    const response = await fetch(`${baseUrl}/api/items/list?page=${page}`, {
+
+    const response = await fetch(`${baseUrl}/api/items/list?page=${page}&query=${query}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +21,7 @@ export default async function Home({ searchParams }: any) {
     });
     const data = await response.json();
     items.push(...data.items);
-  }
+
 
   return (
     <>

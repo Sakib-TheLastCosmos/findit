@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { headers } from "next/dist/server/request/headers";
 import { redirect } from "next/navigation"
 import { twMerge } from "tailwind-merge"
 
@@ -33,4 +34,11 @@ export function getUsername(email: string): string {
   const atIndex = email.indexOf("@");
   if (atIndex === -1) return email; // no @ found, return full string
   return email.slice(0, atIndex);
+}
+
+export async function getBaseURL () {
+    const host = (await headers()).get("host");
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+    const baseUrl = `${protocol}://${host}`;
+    return baseUrl;
 }

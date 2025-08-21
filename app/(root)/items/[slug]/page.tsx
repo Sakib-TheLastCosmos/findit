@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { getBaseURL } from "@/lib/utils";
 interface ItemDetailsPageProps {
   params: Promise<any>
 }
@@ -13,8 +14,8 @@ export default async function ItemDetailsPage({
   const { slug } = await params;
 
   // Mock data for now
-
-  const response = await fetch(`http://localhost:3001/api/items/${slug}`); // Fetch item details from API
+  const baseURL = await getBaseURL()
+  const response = await fetch(`${baseURL}/api/items/${slug}`); // Fetch item details from API
   console.log(response)
   const item = await response.json();
 

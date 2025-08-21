@@ -1,4 +1,5 @@
 import { db } from "@/lib/firebaseAdmin";
+import { typesenseClient } from "@/lib/typesense";
 
 export async function GET(req: Request) {
   try {
@@ -12,12 +13,40 @@ export async function GET(req: Request) {
     const pageSize = 20;
 
     // If query or filters exist, leave empty for now
-    if (query || status || location) {
-      return new Response(
-        JSON.stringify({ message: "Filtering not implemented yet" }),
-        { status: 200 }
+    // if (query || status || location) {
+    //   return new Response(
+    //     JSON.stringify({ message: "Filtering not implemented yet" }),
+    //     { status: 200 }
+    //   );
+    // }
+
+    if (query) {
+      // 1. Search in Typesense
+      const searchResult = await typesenseClient.collections("itemsIndex").documents().search({
+        q: query,
+        query_by: "title,subtitle",
+        sort_by: "date:desc",
+        per_page: pageSize,
+        page,
+      });
+
+      const hits = searchResult?.hits ?? []; // safely default to empty array
+      const ids = hits.map((hit: any) => hit.document.slug); // extract slugs/IDs
+
+      // 2. Fetch full items from Firebase using these IDs in parallel
+      const items = await Promise.all(
+        ids.map(async (id: string) => {
+          const doc = await db.collection("items").doc(id).get();
+          return doc.exists ? { id: doc.id, ...doc.data() } : null;
+        })
       );
+
+      // Filter out any nulls (in case some IDs don't exist in Firebase)
+      const filteredItems = items.filter(Boolean);
+
+      return new Response(JSON.stringify({ page, items: filteredItems }), { status: 200 });
     }
+
 
     // No filters: fetch page-th 20 items
     const snapshot = await db

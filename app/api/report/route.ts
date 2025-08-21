@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import { uploadFile } from "@/lib/cloudinary";
 import { db, FieldValue } from "@/lib/firebaseAdmin";
+import { typesenseClient } from "@/lib/typesense";
 import { getUsername } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData()
+    const formData = await req.formData();
 
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
@@ -21,19 +22,23 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ message: "Missing required fields" }), { status: 400 });
     }
 
-    // ⚠ Use `db`, not `admin.default`!
     const docRef = db.collection("items").doc(slug);
 
-    const session = await auth()
-    const username = getUsername(session?.user?.email ?? "")
+    const session = await auth();
+    const username = getUsername(session?.user?.email ?? "");
 
-    let imageUrl = ""
+    let imageUrl = "";
     if (image) {
       const result = await uploadFile(image, "items");
       imageUrl = result.secure_url;
     }
 
-    await docRef.set({
+    const authorDocRef = db.collection("users").doc(username);
+    const authorDocSnap = await authorDocRef.get();
+    const authorData = authorDocSnap.data();
+
+    // Add to Firebase
+    const itemData = {
       title,
       subtitle: subtitle || "",
       description: description || "",
@@ -43,8 +48,22 @@ export async function POST(req: NextRequest) {
       imageUrl: imageUrl || "",
       slug,
       uploadedAt: FieldValue.serverTimestamp(),
-      authorID: username
+      author: {
+        username: username,
+        name: authorData?.name || ""
+      }
+    };
+
+    await docRef.set(itemData);
+
+    await typesenseClient.collections("itemsIndex").documents().upsert({
+      title,
+      subtitle: subtitle || "",
+      slug,
+      author_name: authorData?.name || "",
+      date: Number(new Date(date)) || Date.now()
     });
+
 
     return new Response(JSON.stringify({ message: "Item reported successfully", id: slug }), { status: 200 });
   } catch (error: unknown) {
