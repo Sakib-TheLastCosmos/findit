@@ -1,16 +1,14 @@
+import { getBaseURL } from "@/lib/utils";
 import Hero from "../../components/Hero";
 import SearchBar from "../../components/SearchBar";
 import ItemList from "@/components/ItemsList";
-import { headers } from "next/headers";
 
 export default async function Home({ searchParams }: any) {
   const query = (await searchParams)?.query || "";
   const page = (await searchParams)?.page || "1";
   const items: any[] = [];
 
-  const host = (await headers()).get("host");
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = await getBaseURL()
 
 
     const response = await fetch(`${baseUrl}/api/items/list?page=${page}&query=${query}`, {

@@ -20,39 +20,43 @@ export default function ReportItemPage() {
     const [date, setDate] = useState("");
     const [status, setStatus] = useState("lost");
     const [image, setImage] = useState<File | null>(null);
+    const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("subtitle", subtitle);
-    formData.append("description", description);
-    formData.append("location", location);
-    formData.append("date", date);
-    formData.append("status", status);
-    formData.append("slug", slugify(title));
-    if (image) formData.append("image", image);
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("subtitle", subtitle);
+        formData.append("description", description);
+        formData.append("location", location);
+        formData.append("date", date);
+        formData.append("status", status);
+        formData.append("slug", slugify(title));
+        if (image) formData.append("image", image);
 
-    try {
-        const response = await fetch("/api/report", {
-            method: "POST",
-            body: formData, // do NOT set Content-Type; browser sets it automatically
-        });
+        try {
+            const response = await fetch("/api/report", {
+                method: "POST",
+                body: formData, // do NOT set Content-Type; browser sets it automatically
+            });
 
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.message || "Failed to submit report");
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || "Failed to submit report");
+            }
+
+            const result = await response.json();
+            console.log("Report submitted successfully:", result);
+
+            window.location.href = `/items/${result.id}`;
+        } catch (error: unknown) {
+            console.error("Error submitting report:", (error as Error).message);
+        } finally {
+            setLoading(false);
         }
-
-        const result = await response.json();
-        console.log("Report submitted successfully:", result);
-
-        window.location.href = `/items/${result.id}`;
-    } catch (error: unknown) {
-        console.error("Error submitting report:", (error as Error).message);
-    }
-};
+    };
 
 
     const removeImage = () => setImage(null);
@@ -182,7 +186,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                         type="submit"
                         className="w-full bg-blue-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-blue-600 transition"
                     >
-                        Submit Report
+                        {loading ? "Submitting..." : "Submit Report"}
                     </button>
                 </form>
             </div>
