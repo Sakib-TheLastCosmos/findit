@@ -1,46 +1,40 @@
 import ItemList from "@/components/ItemsList";
 import SearchBar from "@/components/SearchBar";
+import AdvancedSearch from "@/components/AdvancedSearch";
 import { getBaseURL } from "@/lib/utils";
-import FilterSidebar from "@/components/FilterSidebar";
+import ItemsPageWrapper from "./ItemsPageWrapper";
 
-
-  
 export default async function SearchItemsPage({ searchParams }: any) {
-  const query = (await searchParams)?.query || "";
-  const page = (await searchParams)?.page || "1";
+  const searchParamsData = await searchParams;
+
+  const query = searchParamsData?.query || "";
+  const status = searchParamsData?.status || "";
+  const author = searchParamsData?.author || "";
+  const location = searchParamsData?.location || "";
+  const lat = searchParamsData?.lat || "";
+  const lon = searchParamsData?.lon || "";
+  const radius = searchParamsData?.radius || "";
+  const startDate = searchParamsData?.startDate || "";
+  const endDate = searchParamsData?.endDate || "";
+
   const items: any[] = [];
 
-  const baseURL = await getBaseURL()
+  const baseURL = await getBaseURL();
 
-  const response = await fetch(`${baseURL}/api/items/list?page=${page}&query=${query}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
-  items.push(...data.items);
+  const itemsRes = await fetch(
+    `${baseURL}/api/items/list?query=${query}&status=${status}&author=${author}&location=${location}&lat=${lat}&lon=${lon}&radius=${radius}&startDate=${startDate}&endDate=${endDate}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-  console.log(`${baseURL}/api/items/list?page=${page}&query=${query}`)
-
+  const itemsData = await itemsRes.json();
+  items.push(...itemsData.items);
 
   return (
-    <div className="h-screen flex overflow-hidden  text-gray-100">
-
-      <FilterSidebar />
-
-      {/* Main content area */}
-      <div className="flex-1 ml-64 flex flex-col pt-6">
-        <div className="p-6 flex justify-center">
-          {/* Search bar */}
-          <SearchBar query={query} />
-        </div>
-
-        {/* Item list */}
-        <div className="px-6">
-          <ItemList items={items} />
-        </div>
-      </div>
-    </div>
+    <ItemsPageWrapper query={query} items={items} />
   );
 }

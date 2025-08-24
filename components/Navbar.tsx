@@ -4,6 +4,7 @@ import { getBaseURL } from "@/lib/utils";
 import { auth, signOut, signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = async () => {
 
@@ -26,21 +27,23 @@ const Navbar = async () => {
   return (
     <nav className="sticky top-0 z-50 bg-primary text-white px-8 py-6 flex items-center justify-between shadow-md">
       <div className="text-xl font-bold">Findit</div>
-      <ul className="flex space-x-6">
+      <ul className="flex space-x-6 items-center">
         <li><Link href="/">Home</Link></li>
         <li><Link href="/report">Report Item</Link></li>
         <li><Link href="/items">Search Items</Link></li>
         <li>
           {userComplete.signedUp ? (
             // If signed in -> show Sign Out button
-            <form
-              action={async () => {
-                "use server";
-                await signOut({redirectTo: "/"});
-              }}
-            >
-              <button type="submit">Sign Out</button>
-            </form>
+            <Link href="/profile">
+              <Avatar className="w-12 h-12 cursor-pointer border-1 border-white hover:opacity-80 transition">
+                <AvatarImage src={userComplete?.profilePic || ""} alt="Profile" />
+                <AvatarFallback>
+                  {userComplete?.name
+                    ? userComplete.name[0].toUpperCase()
+                    : "?"}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
           ) : (
             // If not signed in -> show Sign In button
             <form
@@ -53,7 +56,6 @@ const Navbar = async () => {
             </form>
           )}
         </li>
-        <li><Link href="/help">Help</Link></li>
       </ul>
     </nav>
   );

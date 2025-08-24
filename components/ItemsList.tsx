@@ -26,7 +26,7 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
 
   return (
     <div className="mt-8 grid justify-center gap-6 px-8 py-6
-                    grid-cols-1 sm:grid-cols-3 lg:grid-cols-5">
+                    grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
       {items.map((item, idx) => (
         <div key={idx} className="flex justify-center">
           <ItemCard item={item} />

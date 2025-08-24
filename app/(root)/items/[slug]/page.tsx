@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { getBaseURL } from "@/lib/utils";
 interface ItemDetailsPageProps {
@@ -78,7 +79,7 @@ export default async function ItemDetailsPage({
               </div>
               <div>
                 <span className="font-semibold text-gray-100">Location: </span>
-                {item.location}
+                {item.location.place}
               </div>
               <div>
                 <span className="font-semibold text-gray-100">Date: </span>
@@ -86,19 +87,19 @@ export default async function ItemDetailsPage({
               </div>
             </div>
 
-            {/* Poster Profile
+            Poster Profile
             <div className="border-t border-gray-700 mt-6 pt-6 flex items-center gap-4">
               <Avatar className="w-12 h-12">
-                <AvatarImage src={item.postedBy.avatarUrl} />
+                <AvatarImage src={item.author.profilePic} />
                 <AvatarFallback>
-                  {item.postedBy.name.charAt(0).toUpperCase()}
+                  {item.author.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-gray-100">{item.postedBy.name}</p>
+                <p className="font-semibold text-gray-100">{item.author.name}</p>
                 <p className="text-sm text-gray-400">Posted this item</p>
               </div>
-            </div> */}
+            </div>
 
             {/* Action Buttons */}
             <div className="mt-8 flex gap-4">

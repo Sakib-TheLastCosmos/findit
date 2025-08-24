@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     if (!complete) {
       return NextResponse.json({ signedUp: true, complete: false})
     } else {
-      return NextResponse.json({ signedUp: true, complete: true });
+      return NextResponse.json({ signedUp: true, complete: true, profilePic: data?.profilePic, name: data?.name });
     }
   } catch (err) {
     console.error("Error checking profile completion:", err);

@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
     const subtitle = formData.get("subtitle") as string;
     const description = formData.get("description") as string;
     const location = formData.get("location") as string;
+    const lat = formData.get("lat") as number | null;
+    const lon = formData.get("lon") as number | null;
     const date = formData.get("date") as string;
     const status = formData.get("status") as string;
     const image = formData.get("image") as File | null;
@@ -42,7 +44,11 @@ export async function POST(req: NextRequest) {
       title,
       subtitle: subtitle || "",
       description: description || "",
-      location: location || "",
+      location: {
+        place: location || "",
+        lat: lat || null,
+        lon: lon || null
+      },
       date: date || "",
       status: status || "lost",
       imageUrl: imageUrl || "",
@@ -50,19 +56,28 @@ export async function POST(req: NextRequest) {
       uploadedAt: FieldValue.serverTimestamp(),
       author: {
         username: username,
-        name: authorData?.name || ""
+        name: authorData?.name || "",
+        profilePic: authorData?.profilePic || ""
       }
     };
 
     await docRef.set(itemData);
 
-    await typesenseClient.collections("itemsIndex").documents().upsert({
+    // Convert date string to int64 timestamp
+    const dateInt64 = date ? Math.floor(new Date(date).getTime()) : undefined;
+
+    await typesenseClient.collections("items").documents().upsert({
       title,
       subtitle: subtitle || "",
+      location: lat && lon ? [Number(lat), Number(lon)] : undefined, // [lat, lon] for geopoint
+      date: dateInt64,
+      status: status || "lost",
       slug,
+      uploadedAt: Date.now(), // client time in milliseconds
+      author_username: username,
       author_name: authorData?.name || "",
-      date: Number(new Date(date)) || Date.now()
     });
+
 
 
     return new Response(JSON.stringify({ message: "Item reported successfully", id: slug }), { status: 200 });
