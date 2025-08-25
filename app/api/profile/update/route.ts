@@ -3,6 +3,7 @@ import { db } from "@/lib/firebaseAdmin"; // Firestore Admin SDK
 import { uploadFile } from "@/lib/cloudinary";
 import { auth } from "@/auth";
 import { getUsername } from "@/lib/utils";
+import { typesenseClient } from "@/lib/typesense";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
+    const email = session?.user?.email as string; // Use email from session to prevent spoofing
     const mobile = formData.get("mobile") as string;
     const address = formData.get("address") as string;
     const facebook = formData.get("facebook") as string;
@@ -42,6 +43,12 @@ export async function POST(req: NextRequest) {
       profilePic: profilePicUrl,
       updatedAt: new Date(),
     });
+
+    await typesenseClient.collections("users").documents().upsert({
+      id: username,
+      name,
+      username
+    })
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {

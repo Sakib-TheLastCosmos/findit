@@ -32,19 +32,19 @@ export default function ItemsPageWrapper({ items, query }: { items: any[], query
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col pt-6 overflow-auto">
+      <div className="flex-1 flex flex-col pt-10 overflow-auto">
         <div className="fixed px-4 md:px-6 mb-4 flex items-center justify-center">
           {/* Mobile toggle button */}
           <button
-            className="flex md:hidden ml-2 px-4 py-1 bg-gray-700 rounded"
+            className="flex md:hidden ml-2 px-4 py-3 bg-gray-700 rounded"
             onClick={() => setSidebarOpen(true)}
           >
             <Settings2 className="mr-2" />
-            Filters
+            Open Advanced Search
           </button>
         </div>
 
-        <div className="px-4 md:px-6 flex-1">
+        <div className="py-10 px-4 md:px-6 flex-1">
           <ItemList items={items} />
         </div>
       </div>

@@ -24,7 +24,7 @@ export default async function Home({ searchParams }: any) {
   return (
     <>
       <Hero />
-      <SearchBar query={query} />
+      <SearchBar query={query} placeholder="Search for items..." />
       <h1 className="text-3xl font-semibold mt-10 px-10">
         {query ? "Search results for: " + query : "All Items"}
       </h1>

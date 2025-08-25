@@ -31,6 +31,7 @@ const Navbar = async () => {
         <li><Link href="/">Home</Link></li>
         <li><Link href="/report">Report Item</Link></li>
         <li><Link href="/items">Search Items</Link></li>
+        <li><Link href="/users">Users</Link></li>
         <li>
           {userComplete.signedUp ? (
             // If signed in -> show Sign Out button
